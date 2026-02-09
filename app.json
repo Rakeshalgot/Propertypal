@@ -23,7 +23,7 @@
       "publicPath": "/Propertypal/"
     },
     "experiments": {
-      "baseUrl": "/sample",
+      "baseUrl": "/Propertypal",
       "typedRoutes": true
     },
     "extra": {
