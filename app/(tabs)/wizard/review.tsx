@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '@/theme/useTheme';
@@ -19,7 +21,7 @@ import WizardFooter from '@/components/WizardFooter';
 import ReviewSummary from '@/components/ReviewSummary';
 import TotalStatsCard from '@/components/TotalStatsCard';
 import HierarchyCard from '@/components/HierarchyCard';
-import { AlertCircle, CheckCircle } from 'lucide-react-native';
+import { CheckCircle } from 'lucide-react-native';
 
 interface ValidationError {
   type: 'building' | 'floor' | 'room';
@@ -29,6 +31,8 @@ interface ValidationError {
 export default function ReviewScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const windowWidth = Dimensions.get('window').width;
+  const isWideScreen = windowWidth > 768;
   const {
     propertyDetails,
     buildings,
@@ -266,101 +270,47 @@ export default function ReviewScreen() {
         showTitle={false}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {validationErrors.length > 0 && (
-          <View
-            style={[
-              styles.validationCard,
-              { backgroundColor: theme.error + '15', borderColor: theme.error },
-            ]}
-          >
-            <View style={styles.validationHeader}>
-              <AlertCircle size={20} color={theme.error} strokeWidth={2} />
-              <Text style={[styles.validationTitle, { color: theme.error }]}>
-                Validation Errors
-              </Text>
-            </View>
-            <View style={styles.validationList}>
-              {validationErrors.map((error, index) => (
-                <Text
-                  key={index}
-                  style={[styles.validationError, { color: theme.textSecondary }]}
-                >
-                  • {error.message}
-                </Text>
-              ))}
-            </View>
-          </View>
-        )}
+      <ScrollView 
+        contentContainerStyle={[
+          styles.scrollContent, 
+          isWideScreen && styles.scrollContentWide
+        ]}
+      >
+        {/* Header Section */}
+        <View style={[styles.headerSection, isWideScreen && styles.headerSectionWide]}>
+          <ReviewSummary propertyDetails={propertyDetails} />
+          
+          {isWideScreen && (
+            <View style={styles.emptySpace} />
+          )}
+        </View>
 
-        {getEmptyFloors.length > 0 && (
-          <View
-            style={[
-              styles.validationCard,
-              { backgroundColor: theme.warning + '15', borderColor: theme.warning || theme.accent },
-            ]}
-          >
-            <View style={styles.validationHeader}>
-              <AlertCircle size={20} color={theme.warning || theme.accent} strokeWidth={2} />
-              <Text style={[styles.validationTitle, { color: theme.warning || theme.accent }]}>
-                Empty Floors to Remove
-              </Text>
-            </View>
-            <View style={styles.validationList}>
-              {getEmptyFloors.map((item, index) => (
-                <Text
-                  key={index}
-                  style={[styles.validationError, { color: theme.textSecondary }]}
-                >
-                  • Floor {item.floorLabel} in {item.buildingName} (no rooms created)
-                </Text>
-              ))}
-            </View>
-            <Text style={[styles.validationNote, { color: theme.textSecondary }]}>
-              These floors will be automatically removed when you save.
-            </Text>
-          </View>
-        )}
+        {/* Stats Grid */}
+        <View style={[styles.statsGrid, isWideScreen && styles.statsGridWide]}>
+          <TotalStatsCard
+            totalBuildings={totals.totalBuildings}
+            totalFloors={totals.totalFloors}
+            totalRooms={totals.totalRooms}
+            totalBeds={totals.totalBeds}
+          />
+        </View>
 
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Property Details
-        </Text>
-        <ReviewSummary propertyDetails={propertyDetails} />
-
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Total Statistics
-        </Text>
-        <TotalStatsCard
-          totalBuildings={totals.totalBuildings}
-          totalFloors={totals.totalFloors}
-          totalRooms={totals.totalRooms}
-          totalBeds={totals.totalBeds}
-        />
-
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Allowed Share Types
-        </Text>
-        <View
-          style={[
-            styles.infoCard,
-            { backgroundColor: theme.card, borderColor: theme.cardBorder },
-          ]}
-        >
-          <Text style={[styles.infoText, { color: theme.text }]}>
-            {allowedBedCounts.length > 0
-              ? allowedBedCounts.join(', ')
-              : 'None selected'}
+        {/* Buildings Hierarchy */}
+        <View style={styles.hierarchySection}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>
+            Property Structure
           </Text>
+          <View style={[styles.buildingsList, isWideScreen && styles.buildingsListWide]}>
+            {buildings.map((building, index) => (
+              <View key={building.id} style={isWideScreen ? {} : {}}>
+                <HierarchyCard building={building} />
+              </View>
+            ))}
+          </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Buildings & Hierarchy
-        </Text>
-        <View style={styles.buildingsList}>
-          {buildings.map((building) => (
-            <HierarchyCard key={building.id} building={building} />
-          ))}
-        </View>
+        {/* Spacer for footer */}
+        <View style={{ height: Platform.select({ web: 20, default: 40 }) }} />
       </ScrollView>
 
       {showSuccess && (
@@ -395,43 +345,44 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    gap: 20,
-  },
-  validationCard: {
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
+    gap: 24,
+  },
+  scrollContentWide: {
+    paddingHorizontal: 32,
+    paddingVertical: 24,
+    gap: 32,
+    maxWidth: 1200,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  headerSection: {
+    gap: 16,
+  },
+  headerSectionWide: {
+    marginBottom: 8,
+  },
+  emptySpace: {
+    flex: 1,
+  },
+  statsGrid: {
     gap: 12,
   },
-  validationHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  statsGridWide: {
+    marginVertical: 16,
   },
-  validationTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  validationList: {
-    gap: 6,
-    paddingLeft: 8,
-  },
-  validationError: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  validationNote: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontStyle: 'italic',
+  hierarchySection: {
+    gap: 16,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    marginBottom: 4,
+    letterSpacing: 0.3,
   },
   buildingsList: {
+    gap: 12,
+  },
+  buildingsListWide: {
     gap: 16,
   },
   successOverlay: {
@@ -456,14 +407,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     textAlign: 'center',
-  },
-  infoCard: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  infoText: {
-    fontSize: 16,
-    fontWeight: '500',
   },
 });

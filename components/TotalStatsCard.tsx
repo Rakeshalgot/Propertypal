@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useTheme } from '@/theme/useTheme';
 import { Building2, Layers, DoorOpen, Bed } from 'lucide-react-native';
 
@@ -16,60 +16,63 @@ export default function TotalStatsCard({
   totalBeds,
 }: TotalStatsCardProps) {
   const theme = useTheme();
+  const windowWidth = Dimensions.get('window').width;
+  const isWideScreen = windowWidth > 768;
 
   return (
     <View
       style={[
         styles.container,
         { backgroundColor: theme.card, borderColor: theme.cardBorder },
+        isWideScreen && styles.containerWide,
       ]}
     >
       <Text style={[styles.title, { color: theme.text }]}>Summary</Text>
-      <View style={styles.grid}>
-        <View style={styles.statItem}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }]}>
-            <Building2 size={20} color={theme.primary} strokeWidth={2} />
+      <View style={[styles.grid, isWideScreen && styles.gridWide]}>
+        <View style={[styles.statItem, isWideScreen && styles.statItemWide]}>
+          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }, isWideScreen && styles.iconContainerWide]}>
+            <Building2 size={isWideScreen ? 24 : 20} color={theme.primary} strokeWidth={2} />
           </View>
-          <Text style={[styles.statValue, { color: theme.text }]}>
+          <Text style={[styles.statValue, { color: theme.text }, isWideScreen && styles.statValueWide]}>
             {totalBuildings}
           </Text>
-          <Text style={[styles.statLabel, { color: theme.textSecondary }]}>
+          <Text style={[styles.statLabel, { color: theme.textSecondary }, isWideScreen && styles.statLabelWide]}>
             {totalBuildings === 1 ? 'Building' : 'Buildings'}
           </Text>
         </View>
 
-        <View style={styles.statItem}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }]}>
-            <Layers size={20} color={theme.primary} strokeWidth={2} />
+        <View style={[styles.statItem, isWideScreen && styles.statItemWide]}>
+          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }, isWideScreen && styles.iconContainerWide]}>
+            <Layers size={isWideScreen ? 24 : 20} color={theme.primary} strokeWidth={2} />
           </View>
-          <Text style={[styles.statValue, { color: theme.text }]}>
+          <Text style={[styles.statValue, { color: theme.text }, isWideScreen && styles.statValueWide]}>
             {totalFloors}
           </Text>
-          <Text style={[styles.statLabel, { color: theme.textSecondary }]}>
+          <Text style={[styles.statLabel, { color: theme.textSecondary }, isWideScreen && styles.statLabelWide]}>
             {totalFloors === 1 ? 'Floor' : 'Floors'}
           </Text>
         </View>
 
-        <View style={styles.statItem}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }]}>
-            <DoorOpen size={20} color={theme.primary} strokeWidth={2} />
+        <View style={[styles.statItem, isWideScreen && styles.statItemWide]}>
+          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }, isWideScreen && styles.iconContainerWide]}>
+            <DoorOpen size={isWideScreen ? 24 : 20} color={theme.primary} strokeWidth={2} />
           </View>
-          <Text style={[styles.statValue, { color: theme.text }]}>
+          <Text style={[styles.statValue, { color: theme.text }, isWideScreen && styles.statValueWide]}>
             {totalRooms}
           </Text>
-          <Text style={[styles.statLabel, { color: theme.textSecondary }]}>
+          <Text style={[styles.statLabel, { color: theme.textSecondary }, isWideScreen && styles.statLabelWide]}>
             {totalRooms === 1 ? 'Room' : 'Rooms'}
           </Text>
         </View>
 
-        <View style={styles.statItem}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }]}>
-            <Bed size={20} color={theme.primary} strokeWidth={2} />
+        <View style={[styles.statItem, isWideScreen && styles.statItemWide]}>
+          <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }, isWideScreen && styles.iconContainerWide]}>
+            <Bed size={isWideScreen ? 24 : 20} color={theme.primary} strokeWidth={2} />
           </View>
-          <Text style={[styles.statValue, { color: theme.text }]}>
+          <Text style={[styles.statValue, { color: theme.text }, isWideScreen && styles.statValueWide]}>
             {totalBeds}
           </Text>
-          <Text style={[styles.statLabel, { color: theme.textSecondary }]}>
+          <Text style={[styles.statLabel, { color: theme.textSecondary }, isWideScreen && styles.statLabelWide]}>
             {totalBeds === 1 ? 'Bed' : 'Beds'}
           </Text>
         </View>
@@ -85,19 +88,32 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 16,
   },
+  containerWide: {
+    padding: 28,
+    gap: 24,
+  },
   title: {
     fontSize: 18,
     fontWeight: '700',
+    letterSpacing: 0.3,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 16,
   },
+  gridWide: {
+    gap: 24,
+    justifyContent: 'space-between',
+  },
   statItem: {
     alignItems: 'center',
     gap: 8,
     width: '45%',
+  },
+  statItemWide: {
+    width: '22%',
+    gap: 12,
   },
   iconContainer: {
     width: 48,
@@ -106,12 +122,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  iconContainerWide: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+  },
   statValue: {
     fontSize: 28,
     fontWeight: '700',
   },
+  statValueWide: {
+    fontSize: 32,
+    fontWeight: '800',
+  },
   statLabel: {
     fontSize: 13,
+    fontWeight: '600',
+  },
+  statLabelWide: {
+    fontSize: 14,
     fontWeight: '600',
   },
 });
