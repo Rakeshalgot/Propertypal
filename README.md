@@ -218,7 +218,7 @@ This project is configured to export static web files into the `docs/` folder fo
 
 1. Ensure the base path matches your repo name:
   - Update `expo.web.publicPath` and `expo.experiments.baseUrl` in `app.json` to `/<repo-name>/` and `/<repo-name>`.
-  - It is currently set to `/sample/`.
+  - It is currently set to `/Propertypal/`.
 2. Build the web export:
   ```bash
   npm run build:web

@@ -20,7 +20,7 @@
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "publicPath": "/sample/"
+      "publicPath": "/Propertypal/"
     },
     "experiments": {
       "baseUrl": "/sample",
