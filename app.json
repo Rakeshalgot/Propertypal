@@ -18,12 +18,12 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "publicPath": "/Propertypal/"
+        "output": "static",
+        "favicon": "./assets/images/favicon.png",
+        "publicPath": "/"
     },
     "experiments": {
-      "baseUrl": "/Propertypal",
+        "baseUrl": "/",
       "typedRoutes": true
     },
     "extra": {
